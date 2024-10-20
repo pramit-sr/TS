@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ternary Search Visualization</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,900);
+
+        body {
+            background: linear-gradient(135deg, rgb(9, 9, 27) 0%, rgb(39, 8, 39) 50%, rgb(92, 84, 84) 100%);
+            font-family: 'Arial', sans-serif;
+            position: relative;
+        }
+        h1 {
+            text-shadow: -1px;
+            font-family: 'Arial', sans-serif;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+        }
+        .input-container {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+        }
+        .array-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            margin-top: 250px;
+            margin-bottom: 2rem;
+            max-width: 80%;
+            padding: 0 20px;
+        }
+        .array-item {
+            transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
+            margin: 0.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #2563eb;
+            background-color: white;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .highlight-left {
+            background-color: #dc3545; /* Red for left */
+            color: white;
+        }
+        .highlight-right {
+            background-color: #fd7e14; /* Orange for right */
+            color: white;
+        }
+        .highlight-mid {
+            background-color: #007bff; /* Blue for mid */
+            color: white;
+        }
+        .match-highlight {
+            background-color: #28a745; /* Green for match */
+            color: white;
+        }
+        .no-match-highlight {
+            background-color: #dc3545; /* Red for no match */
+            color: white;
+        }
+        .button {
+            font-family: 'Arial', sans-serif;
+            border: 1px solid gray;
+            color: white;
+            padding: 2.5px 4px;
+            text-align: center;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+        .button:hover {
+            background-color: #2a1879;
+            transition-duration: .4s;
+        }
+        input {
+            font-family: 'Arial', sans-serif !important;
+            font-size: 16px !important;
+        }
+        .code-container {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: auto;
+            max-width: 550px;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-start justify-start min-h-screen relative">
+
+    <h1 class="text-3xl font-bold mb-8">Ternary Search Visualization</h1>
+    <div class="input-container">
+        <input type="text" id="arrayInput" placeholder="Enter numbers separated by commas (e.g. 4,3,2,1)" class="p-2 border border-gray-300 rounded mb-4 w-96" />
+        <input type="number" id="searchInput" placeholder="Search Number" class="p-2 border border-gray-300 rounded mb-4 w-40" />
+        <div class="flex space-x-4">
+            <button id="ternarySearchButton" class="button bg-green-500 text-white py-2 px-4 rounded">Ternary Search</button>
+        </div>
+    </div>
+
+    <div class="array-container flex justify-center mb-6" id="arrayContainer"></div>
+    <div class="iteration-info mt-4 text-lg text-white" id="iterationInfo"></div>
+
+    <div class="code-container">
+        <pre class="code-snippet p-4 text-black rounded-lg overflow-x-auto bg-gray-100">
+            <code id="codeSnippet" class="language-javascript">
+function ternarySearch(arr, target, left, right) {
+    if (right >= left) {
+        let mid1 = left + Math.floor((right - left) / 3);
+        let mid2 = right - Math.floor((right - left) / 3);
+
+        if (arr[mid1] === target) return mid1;
+        if (arr[mid2] === target) return mid2;
+
+        if (target < arr[mid1]) 
+        return ternarySearch(arr, target, left, mid1 - 1);
+        else if (target > arr[mid2]) 
+        return ternarySearch(arr, target, mid2 + 1, right);
+        else return ternarySearch(arr, target, mid1 + 1, mid2 - 1);
+    }
+    return -1;
+}
+            </code>
+        </pre>
+    </div>
+
+    <script>
+        // Original ternary search function code
+        const originalCode = `
+function ternarySearch(arr, target, left, right) {
+        if (right >= left) {
+    let mid1 = left + Math.floor((right - left) / 3);
+    let mid2 = right - Math.floor((right - left) / 3);
+
+    if (arr[mid1] === target) return mid1;
+    if (arr[mid2] === target) return mid2;
+
+    if (target < arr[mid1]) 
+    return ternarySearch(arr, target, left, mid1 - 1);
+    else if (target > arr[mid2]) 
+    return ternarySearch(arr, target, mid2 + 1, right);
+    else return ternarySearch(arr, target, mid1 + 1, mid2 - 1);
+}
+return -1;
+}`;
+
+        // Ternary Search Algorithm
+        function ternarySearch(arr, target, left, right) {
+            const iterations = [];
+            while (right >= left) {
+                let mid1 = left + Math.floor((right - left) / 3);
+                let mid2 = right - Math.floor((right - left) / 3);
+                iterations.push({ mid1, mid2, left, right });
+
+                if (arr[mid1] === target) {
+                    return { index: mid1, iterations };
+                }
+                if (arr[mid2] === target) {
+                    return { index: mid2, iterations };
+                }
+
+                if (target < arr[mid1]) {
+                    right = mid1 - 1;
+                } else if (target > arr[mid2]) {
+                    left = mid2 + 1;
+                } else {
+                    left = mid1 + 1;
+                    right = mid2 - 1;
+                }
+            }
+            return { index: -1, iterations };
+        }
+
+        // Function to visualize ternary search
+        function visualizeTernarySearch() {
+            const arrayInput = document.getElementById('arrayInput').value;
+            const searchInput = parseInt(document.getElementById('searchInput').value);
+            const arrayContainer = document.getElementById('arrayContainer');
+            const iterationInfo = document.getElementById('iterationInfo');
+
+            let arr = arrayInput.split(',').map(Number);
+            arr.sort((a, b) => a - b); // Sort the array before performing ternary search
+            arrayContainer.innerHTML = '';
+
+            let searchResult = ternarySearch(arr, searchInput, 0, arr.length - 1);
+            let currentIteration = 0;
+
+            // Create array elements and control line break after 10 elements
+            arr.forEach((num, index) => {
+                const item = document.createElement('div');
+                item.className = 'array-item';
+                item.innerHTML = num;
+                arrayContainer.appendChild(item);
+
+                // Break line after 10 elements
+                if ((index + 1) % 10 === 0) {
+                    const lineBreak = document.createElement('div');
+                    lineBreak.style.flexBasis = '100%'; // Force break to the next line
+                    arrayContainer.appendChild(lineBreak);
+                }
+            });
+
+            const displayIteration = async () => {
+                if (currentIteration < searchResult.iterations.length) {
+                    const { mid1, mid2, left, right } = searchResult.iterations[currentIteration];
+
+                    let modifiedCode = originalCode
+                        .replace(/target/g, searchInput)
+                        .replace(/arr\[mid1\]/, `arr[${mid1}] (${arr[mid1]})`)
+                        .replace(/arr\[mid2\]/, `arr[${mid2}] (${arr[mid2]})`);
+
+                    document.getElementById('codeSnippet').innerHTML = modifiedCode
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/`/g, "&grave;");
+
+                    const elements = document.querySelectorAll('.array-item');
+                    elements.forEach(element => {
+                        element.classList.remove('highlight-left', 'highlight-right', 'highlight-mid', 'match-highlight', 'no-match-highlight');
+                    });
+
+                    iterationInfo.innerHTML = `Checking left (${left}): ${arr[left]}, mid1 (${mid1}): ${arr[mid1]}, mid2 (${mid2}): ${arr[mid2]}, right (${right}): ${arr[right]}`;
+
+                    elements[left].classList.add('highlight-left');
+                    elements[right].classList.add('highlight-right');
+                    elements[mid1].classList.add('highlight-mid');
+                    elements[mid2].classList.add('highlight-mid');
+
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Delay of 1000ms
+
+                    if (arr[mid1] === searchInput) {
+                        elements[mid1].classList.add('match-highlight');
+                        iterationInfo.innerHTML += `<br>Match found at index ${mid1}`;
+                        return;
+                    } else if (arr[mid2] === searchInput) {
+                        elements[mid2].classList.add('match-highlight');
+                        iterationInfo.innerHTML += `<br>Match found at index ${mid2}`;
+                        return;
+                    } else {
+                        elements[mid1].classList.add('no-match-highlight');
+                        elements[mid2].classList.add('no-match-highlight');
+                    }
+
+                    currentIteration++;
+                    setTimeout(displayIteration, 2000);
+                } else {
+                    iterationInfo.innerHTML += `<br>Result: Element not found`;
+                }
+            };
+
+            displayIteration();
+        }
+
+        // Event listeners
+        document.getElementById('ternarySearchButton').addEventListener('click', visualizeTernarySearch);
+    </script>
+</body>
+</html>
